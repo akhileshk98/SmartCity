@@ -19,10 +19,10 @@ SemaphoreHandle_t xTask12Sync;
 SemaphoreHandle_t xTask34Sync;
 
 // Task periods (in milliseconds)
-#define TASK1_PERIOD 1000
-#define TASK2_PERIOD 2000
-#define TASK3_PERIOD 3000
-#define TASK4_PERIOD 4000
+#define TASK1_PERIOD 3000
+#define TASK2_PERIOD 1000
+#define TASK3_PERIOD 4000
+#define TASK4_PERIOD 1000
 
 // Task next release times
 TickType_t xTask1NextRelease;
@@ -37,7 +37,9 @@ void vTask3(void* pvParameters);
 void vTask4(void* pvParameters);
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(250000);
+
+    cj.Initialize_Setup();
 
     // Initialize synchronization semaphores
     xTask12Sync = xSemaphoreCreateBinary();
@@ -49,17 +51,7 @@ void setup() {
     xTask3NextRelease = xTaskGetTickCount();
     xTask4NextRelease = xTaskGetTickCount();
 
-    // Create Task1 with priority 1
-    xTaskCreate(vTask1, "Task1", 128, NULL, 1, &xTask1);
-
-    // Create Task2 with priority 2
-    xTaskCreate(vTask2, "Task2", 128, NULL, 2, &xTask2);
-
-    // Create Task3 with priority 3
-    xTaskCreate(vTask3, "Task3", 128, NULL, 3, &xTask3);
-
-    // Create Task4 with priority 4
-    xTaskCreate(vTask4, "Task4", 128, NULL, 4, &xTask4);
+    CreateTasks();
 
     // Start the FreeRTOS scheduler
     vTaskStartScheduler();
@@ -67,13 +59,56 @@ void setup() {
 
 void loop() {
     // The scheduler should never return, but if it does, there's an error
-    for (;;) {}
+    for (;;) {
+    }
+}
+
+void CreateTasks()
+{
+
+    // Create Task1 with priority 1
+    xTaskCreate(
+        vTask1,
+        "Task1",
+        128,
+        NULL,
+        1,
+        &xTask1);
+
+    // Create Task2 with priority 2
+    xTaskCreate(
+        vTask2,
+        "Task2",
+        128,
+        NULL,
+        2,
+        &xTask2);
+
+    // Create Task3 with priority 3
+    xTaskCreate(
+        vTask3,
+        "Task3",
+        128,
+        NULL,
+        3,
+        &xTask3);
+
+    // Create Task4 with priority 4
+    xTaskCreate(
+        vTask4,
+        "Task4",
+        128,
+        NULL,
+        4,
+        &xTask4);
 }
 
 void vTask1(void* pvParameters) {
     for (;;) {
+
         // Task 1 logic
         cj.CongStat_CurrentJunc();
+        Serial.println("Task1 Ended");
 
         // Notify Task 2 to execute
         xSemaphoreGive(xTask12Sync);
@@ -89,9 +124,16 @@ void vTask2(void* pvParameters) {
         // Wait for Task 1 to notify
         xSemaphoreTake(xTask12Sync, portMAX_DELAY);
 
-        // Task 2 logic
+        // TickType_t startTime = xTaskGetTickCount();
+         // Task 2 logic
         tc.TrafficSig_PreviousJunc();
-        // Wait for the next period
+
+        // TickType_t endTime = xTaskGetTickCount();
+
+         // Calculate the execution time in milliseconds
+         //TickType_t executionTime = endTime - startTime;
+         //Serial.println(executionTime);
+         // Wait for the next period
         xTask2NextRelease += pdMS_TO_TICKS(TASK2_PERIOD);
         vTaskDelayUntil(&xTask2NextRelease, pdMS_TO_TICKS(TASK2_PERIOD));
     }
@@ -101,6 +143,7 @@ void vTask3(void* pvParameters) {
     for (;;) {
         // Task 3 logic
         cj.CongeStat_NextJuncs();
+        Serial.println("Task3 Ended");
         // Notify Task 4 to execute
         xSemaphoreGive(xTask34Sync);
 
@@ -122,5 +165,6 @@ void vTask4(void* pvParameters) {
         xTask4NextRelease += pdMS_TO_TICKS(TASK4_PERIOD);
         vTaskDelayUntil(&xTask4NextRelease, pdMS_TO_TICKS(TASK4_PERIOD));
     }
+
 }
 

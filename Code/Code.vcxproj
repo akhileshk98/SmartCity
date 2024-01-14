@@ -135,6 +135,9 @@
     <ClInclude Include="CongestionMonitor.h" />
     <ClInclude Include="TrafficController.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="CircuitDiagram.json" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
