@@ -9,10 +9,9 @@ class traffic_ctlr {
 public:
 	traffic_ctlr();
 
-	void TrafficControllerTask();
-	void TrafficSignalControl();
-	void AckCongestionAlert();
-	void AlternateRouteCongestion();
+	void TrafficSig_PreviousJunc();
+	void TrafficSig_CurrentJunc();
+
 };
 
 extern traffic_ctlr tc;

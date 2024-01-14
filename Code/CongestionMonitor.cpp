@@ -1,21 +1,34 @@
 #include "CongestionMonitor.h"
+#include "TrafficController.h"
 
 
-void congestion_mtr::CongestionMonitorTask()
+// This functions checks the current status of congestion in initial traffic
+void congestion_mtr::CongStat_CurrentJunc()
 {
-	Serial.println("Congestion Detected");
+	CongStat_Curr = true;
+	if(CongStat_Curr == true)
+	{
+		Serial.println("Congestion Detected in Current Route");
+	}else
+	{
+		Serial.println("No Congestion Detected in Current Route");
+	}
 }
 
-bool congestion_mtr::CongestionStatus()
+void congestion_mtr::CongeStat_NextJuncs()
 {
+	if (CongStat_Route1 == false && CongStat_Route2 == false && CongStat_Route3 == true)
+	{
+		Serial.println("No Congestion in Alternate Route 1 and 2");
+	}else
+	{
+		Serial.println("Congestion Status in Next Junctions Check");
+	}
 
 }
 
-void congestion_mtr::AlertTrafficController()
-{
 
-}
-
+// Constructor
 congestion_mtr::congestion_mtr()
 {
 

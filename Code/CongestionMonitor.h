@@ -8,9 +8,15 @@ class congestion_mtr{
 public:
 	congestion_mtr();
 
+	bool CongStat_Curr = false;
+	bool CongStat_Route1 = false;
+	bool CongStat_Route2 = false;
+	bool CongStat_Route3 = false;
+
+
 	void CongestionMonitorTask();
-	bool CongestionStatus();
-	void AlertTrafficController();
+	void CongStat_CurrentJunc();
+	void CongeStat_NextJuncs();
 
 
 };
